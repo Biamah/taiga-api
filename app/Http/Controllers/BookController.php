@@ -12,10 +12,16 @@ class BookController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
+        $query = Book::query();
+
+        if ($request->has('title')) {
+            $query->where('title', 'like', '%' . $request->input('title') . '%');
+        }
+
         // Recupera todos os livros do banco de dados
-        $books = Book::with(['publisher', 'targetAudience'])->paginate(15);
+        $books = $query->with(['publisher', 'targetAudience'])->paginate(15);
 
         // Retorna a lista de livros em formato JSON
         return response()->json($books);
